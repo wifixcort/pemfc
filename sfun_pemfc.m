@@ -24,7 +24,7 @@ setup(block);
 %
 function setup(block)
 % Se registra el número de puertos de entrada y salida
-block.NumInputPorts  = 3; % Cantidad de entradas
+block.NumInputPorts  = 4; % Cantidad de entradas
 block.NumOutputPorts = 1; % Cantidad de salidas
 
 % Setup port properties to be inherited or dynamic
@@ -48,6 +48,12 @@ block.InputPort(3).Dimensions        = 1;
 block.InputPort(3).DatatypeID  = 0;  % double
 block.InputPort(3).Complexity  = 'Real';
 block.InputPort(3).DirectFeedthrough = true;
+
+% Propiedades de los puertos de entrada
+block.InputPort(4).Dimensions        = 1;
+block.InputPort(4).DatatypeID  = 0;  % double
+block.InputPort(4).Complexity  = 'Real';
+block.InputPort(4).DirectFeedthrough = true;
 
 % Propiedades de los puertos de salida
 block.OutputPort(1).Dimensions       = 1;
@@ -154,26 +160,28 @@ x = block.ContStates.Data; % Vector de estados iniciales
 H_2in =  block.InputPort(1).Data; % Hidrógeno de entrada
 O_2in =  block.InputPort(2).Data; % Oxígeno de entrada
 i =  block.InputPort(3).Data; % i es la intensidad de corriente
+H_2O_in = block.InputPort(3).Data; % Agua de entrada
 
 R = 8.3144; % Constantes de gas ideal
 F = 96439; % Constante de Faraday
 
 K_r = N/(4*F); %
 
-M_1_1 = ((R*T)/Va)*(1-(x(1)/Po));
-M_2_2 = ((R*T)/Vc)*(1-(x(2)/Po));
-M_2_3 = -((R*T)/(Va*Po))*x(3);
+RTA = (R*T)/Va;
+RTC = (R*T)/Vc;
 
-RT = (R*T)/(Vc*Po);
+M_1_1 = RTA*(1-(x(1)/Po));
+M_2_2 = RTC*(1-(x(2)/Po));
+M_2_3 = -RTC*(x(3)/Po);
 
-M_3_1 = RT*(-2*K_r*Ac+2*K_r*Ac*x(1));
-M_3_2 = RT*(-K_r*Ac+2*K_r*Ac*x(2));
-M_3_3 = RT*(2*K_r*Ac-2*K_r*Ac*x(3));
+M_3_1 = RTA*(2*K_r*Ac*(-1+(x(1)/Po)));
+M_3_2 = RTC*(K_r*Ac*(-1+(x(2)/Po)));
+M_3_3 = RTC*(2*K_r*Ac*(1-(x(3)/Po)));
 
 %=====Desarrollar las matrices de estado aquí=====
 dx1dt = M_1_1*H_2in+M_3_1*i;
 dx2dt = M_2_2*O_2in+M_3_2*i;
-dx3dt = M_2_3*O_2in+M_3_3*i;
+dx3dt = RTC*H_2O_in+M_2_3*O_2in+M_3_3*i;%RTC*H_2O_in+
 %=================================================
 
 block.Derivatives.Data = [dx1dt;dx2dt;dx3dt]; % actualizacion del bloque de la S-function
