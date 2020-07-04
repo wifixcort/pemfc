@@ -1,12 +1,12 @@
 % Implementación para Matlab
-% Modelo no lineal de una celda de combustible
+% Modelo lineal de una celda de combustible
 % Ricardo Mena Cortés
 % Universidad de Costa Rica
 % Modelo basado en el artículo:
 % Nonlinear Control of PEM Fuel Cells by Exact Linearization
 % Autores: Woon Ki Na, Bei Gou, and Bill Diong
 
-function sfun_pemfc(block)
+function sfun_pemfc_lineal(block)
 % 
 % No agregue nada más a esta función principal
 %
