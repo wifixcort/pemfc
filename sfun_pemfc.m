@@ -61,12 +61,6 @@ block.OutputPort(1).DatatypeID  = 0; % double
 block.OutputPort(1).Complexity  = 'Real';
 block.OutputPort(1).SamplingMode = 'Sample';
 
-% Propiedades de los puertos de salida
-%block.OutputPort(2).Dimensions       = 1;
-%block.OutputPort(2).DatatypeID  = 0; % double
-%block.OutputPort(2).Complexity  = 'Real';
-%block.OutputPort(2).SamplingMode = 'Sample';
-
 % Número de parámetros
 block.NumDialogPrms     = 13; % en este caso hay 12 parámetros de entrada
                              % el 13 "parámentro" corresponde al vector
@@ -160,7 +154,7 @@ x = block.ContStates.Data; % Vector de estados iniciales
 H_2in =  block.InputPort(1).Data; % Hidrógeno de entrada
 O_2in =  block.InputPort(2).Data; % Oxígeno de entrada
 i =  block.InputPort(3).Data; % i es la intensidad de corriente
-H_2O_in = block.InputPort(3).Data; % Agua de entrada
+H_2O_in = block.InputPort(4).Data; % Agua de entrada
 
 R = 8.3144; % Constantes de gas ideal
 F = 96439; % Constante de Faraday
@@ -183,6 +177,8 @@ dx1dt = M_1_1*H_2in+M_3_1*i;
 dx2dt = M_2_2*O_2in+M_3_2*i;
 dx3dt = RTC*H_2O_in+M_2_3*O_2in+M_3_3*i;%RTC*H_2O_in+
 %=================================================
+
+% Reformador
 
 block.Derivatives.Data = [dx1dt;dx2dt;dx3dt]; % actualizacion del bloque de la S-function
 %end ModeloEstados
